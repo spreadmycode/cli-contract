@@ -8,8 +8,8 @@ program.version('0.0.1');
 
 log.setLevel(log.levels.INFO);
 
-const PROGRAM_ID = new PublicKey('5d1tajujHvUjbDVGjhQjfcfrJiuL9wjPDwko4X2RHFDS');
-const PROGRAM_ACCOUNT = new PublicKey('5d1tajujHvUjbDVGjhQjfcfrJiuL9wjPDwko4X2RHFDS');
+const PROGRAM_ID = new PublicKey('9xcrzYhMDGJVXMRV42wMP93nj9Dgz2KUtcMwrWJCR2hq');
+const PROGRAM_ACCOUNT = new PublicKey('4LT3YTFnrwqWeCRVqFxeMjBH4wrLk92Axh24ZwpwAdKL');
 
 async function loadAnchorProgram(walletKeyPair: Keypair, env: string) {
   // @ts-ignore
@@ -119,7 +119,71 @@ program.
         }
       },
     );
-    console.log(`Presale is pending`);
+    console.log(`Sale status is toggled.`);
+});
+
+program.
+  command('add_whitelist')
+  .option(
+    '-e, --env <string>',
+    'Solana cluster env name',
+    'devnet', //mainnet-beta, testnet, devnet
+  )
+  .option(
+    '-k, --keypair <path>',
+    `Solana wallet location`,
+    '--keypair not provided',
+  )
+  .option(
+    '-p, --pubkey <string>',
+    'Solana wallet pubkey to whitelist',
+    '',
+  )
+  .action(async (directory, cmd) => {
+    const { keypair, env, pubkey } = cmd.opts();
+
+    const walletKeyPair = loadWalletKey(keypair);
+    const anchorProgram = await loadAnchorProgram(walletKeyPair, env);
+
+    await anchorProgram.rpc.addWhitelist(
+      pubkey,
+      {
+        accounts: {
+          data: PROGRAM_ACCOUNT,
+          minter: walletKeyPair.publicKey,
+        }
+      },
+    );
+    console.log(`${pubkey} is added to whitelist.`);
+});
+
+program.
+  command('clear_whitelist')
+  .option(
+    '-e, --env <string>',
+    'Solana cluster env name',
+    'devnet', //mainnet-beta, testnet, devnet
+  )
+  .option(
+    '-k, --keypair <path>',
+    `Solana wallet location`,
+    '--keypair not provided',
+  )
+  .action(async (directory, cmd) => {
+    const { keypair, env } = cmd.opts();
+
+    const walletKeyPair = loadWalletKey(keypair);
+    const anchorProgram = await loadAnchorProgram(walletKeyPair, env);
+
+    await anchorProgram.rpc.clearWhitelist(
+      {
+        accounts: {
+          data: PROGRAM_ACCOUNT,
+          minter: walletKeyPair.publicKey,
+        }
+      },
+    );
+    console.log(`Whitelist is cleared.`);
 });
 
 program.parse(process.argv);
