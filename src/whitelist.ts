@@ -12,9 +12,9 @@ program.version('0.0.1');
 
 log.setLevel(log.levels.INFO);
 
-const PROGRAM_ID = new PublicKey('2LtzaPN7S87FfWTUKxXk4KjTcYp4Pkb3vTEnq2TZSoTg');
-const WHITELIST_STATE = new PublicKey('');
-const WHITELIST_DATA = new PublicKey('');
+const PROGRAM_ID = new PublicKey('AtJzU1u3dWVYQefiGxJocjRBcdArbKNrrDRzeDk1wEFr');
+const WHITELIST_STATE = new PublicKey('2LtzaPN7S87FfWTUKxXk4KjTcYp4Pkb3vTEnq2TZSoTg');
+const WHITELIST_DATA = new PublicKey('2LtzaPN7S87FfWTUKxXk4KjTcYp4Pkb3vTEnq2TZSoTg');
 
 async function loadAnchorProgram(walletKeyPair: Keypair, env: string) {
   // @ts-ignore
@@ -58,7 +58,7 @@ program.
     const whitelistDataSize = 8 + 32 * WHITELIST_LEN;
     const program = await loadAnchorProgram(walletKeyPair, env);
 
-    let tx = await program.rpc.initialize(walletKeyPair.publicKey, {
+    let tx = await program.rpc.initialize({
         accounts: {
             whitelistState: whitelistState.publicKey,
             whitelistData: whitelistData.publicKey,
@@ -106,7 +106,7 @@ program.
   .action(async (directory, cmd) => {
     const { keypair, env, addresses } = cmd.opts();
 
-    const fileContent = fs.readFileSync(keypair).toString();
+    const fileContent = fs.readFileSync(addresses).toString();
     let lines = fileContent.split('\n');
     let list = [];
 
