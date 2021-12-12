@@ -193,18 +193,22 @@ program.
         }
       }
       if (list.length > 0) {
-        await anchorProgram.rpc.addWhitelists(
-          list,
-          {
-            accounts: {
-              data: PROGRAM_ACCOUNT,
-              minter: walletKeyPair.publicKey,
-            }
-          },
-        );
+        try {
+          await anchorProgram.rpc.addWhitelists(
+            list,
+            {
+              accounts: {
+                data: PROGRAM_ACCOUNT,
+                minter: walletKeyPair.publicKey,
+              }
+            },
+          );
+        } catch (e) {
+          console.log(`${i/10} batch failed`);
+        }
       }
 
-      console.log(`${list.length} wallets added`);
+      console.log(`${i/10} batch added`);
     }
 
     console.log(`Done.`);
