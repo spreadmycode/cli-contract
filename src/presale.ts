@@ -180,31 +180,34 @@ program.
 
 		const fileContent = fs.readFileSync(addresses).toString();
     let lines = fileContent.split('\n');
-    let list = [];
-
-    for (let i = 0; i < lines.length; i++) {
-        let line = lines[i];
-		if (line && line.length >= 32) {
-        	list.push(line);
-		}
-    }
-
-    console.log('Wallet Count: ', list.length);
 
     const walletKeyPair = loadWalletKey(keypair);
     const anchorProgram = await loadAnchorProgram(walletKeyPair, env);
-
-    await anchorProgram.rpc.addWhitelists(
-      list,
-      {
-        accounts: {
-          data: PROGRAM_ACCOUNT,
-          minter: walletKeyPair.publicKey,
+    
+    for (let i = 0; i < lines.length; i = i + 10) {
+      let list = [];
+      for (let j = i; j < i + 10; j++) {
+        let line = lines[j];
+        if (line && line.length >= 32) {
+          list.push(line);
         }
-      },
-    );
+      }
+      if (list.length > 0) {
+        await anchorProgram.rpc.addWhitelists(
+          list,
+          {
+            accounts: {
+              data: PROGRAM_ACCOUNT,
+              minter: walletKeyPair.publicKey,
+            }
+          },
+        );
+      }
 
-    console.log(`Addresses are added to whitelist.`);
+      console.log(`${list.length} wallets added`);
+    }
+
+    console.log(`Done.`);
 });
 
 program.
