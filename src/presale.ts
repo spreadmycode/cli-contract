@@ -9,17 +9,12 @@ program.version('0.0.1');
 
 log.setLevel(log.levels.INFO);
 
-	// Single one
-// const PROGRAM_ID = new PublicKey('9xcrzYhMDGJVXMRV42wMP93nj9Dgz2KUtcMwrWJCR2hq');
-// const PROGRAM_ACCOUNT = new PublicKey('4LT3YTFnrwqWeCRVqFxeMjBH4wrLk92Axh24ZwpwAdKL');
-
-	// Multiple one
-	const PROGRAM_ID = new PublicKey('9DDCYYriAf5u4vb1kgnuZ476RtNTsLAohnpzVvkWbzi');
-	const PROGRAM_ACCOUNT = new PublicKey('QBYmvRqkEgcQUrw4WApefD5ZQW9Jux8i1oM7iQAHt3s');
+	const PROGRAM_ID = new PublicKey('7WJ2dcuz6iRSmsBcgG8HM5tHMtCddHhVXn9qxAew7tU9');
+	const PROGRAM_ACCOUNT = new PublicKey('4JWVi3UVXvT63ykKMWaWskUCJTTs7fPtaRv3jEEsx7RY');
 
 async function loadAnchorProgram(walletKeyPair: Keypair, env: string) {
   // @ts-ignore
-  const solConnection = new anchor.web3.Connection("https://cold-green-frost.solana-devnet.quiknode.pro/8a1ca977a24ae481d6f739d894f8aa606a5b90d6/");
+  const solConnection = new anchor.web3.Connection("https://sparkling-dry-thunder.solana-devnet.quiknode.pro/08975c8cb3c5209785a819fc9a3b2b537d3ba604/");
   const walletWrapper = new anchor.Wallet(walletKeyPair);
   const provider = new anchor.Provider(solConnection, walletWrapper, {
     preflightCommitment: 'recent',
