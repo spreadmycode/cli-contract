@@ -12,7 +12,7 @@ program.version('0.0.1');
 
 log.setLevel(log.levels.INFO);
 
-const PROGRAM_ID = new PublicKey('9pkYv3SvYfd51mh1v3vn1aX2WHepx7wZxsfxpmsNdFT7');
+const PROGRAM_ID = new PublicKey('94mweQHibXMVsQDmoHbXz1Sxpu9D9nxznf3movyFFWje');
 const WHITELIST_STATE = new PublicKey('2LtzaPN7S87FfWTUKxXk4KjTcYp4Pkb3vTEnq2TZSoTg');
 const WHITELIST_DATA = new PublicKey('2LtzaPN7S87FfWTUKxXk4KjTcYp4Pkb3vTEnq2TZSoTg');
 
