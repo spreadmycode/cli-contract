@@ -4,10 +4,10 @@ export const WHITELIST_IDL =
   "name": "whitelist",
   "instructions": [
     {
-      "name": "initialize",
+      "name": "initializeContract",
       "accounts": [
         {
-          "name": "whitelistState",
+          "name": "data",
           "isMut": true,
           "isSigner": true
         },
@@ -18,8 +18,8 @@ export const WHITELIST_IDL =
         },
         {
           "name": "user",
-          "isMut": true,
-          "isSigner": true
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "systemProgram",
@@ -30,16 +30,21 @@ export const WHITELIST_IDL =
       "args": []
     },
     {
-      "name": "addWhitelistAddresses",
+      "name": "addWhitelists",
       "accounts": [
         {
-          "name": "whitelistState",
+          "name": "data",
           "isMut": true,
           "isSigner": false
         },
         {
           "name": "whitelistData",
           "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "minter",
+          "isMut": false,
           "isSigner": false
         }
       ],
@@ -53,10 +58,62 @@ export const WHITELIST_IDL =
       ]
     },
     {
-      "name": "resetWhitelistCounter",
+      "name": "clearWhitelist",
       "accounts": [
         {
-          "name": "whitelistState",
+          "name": "data",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "minter",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "setPending",
+      "accounts": [
+        {
+          "name": "data",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "minter",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "togglePeriod",
+      "accounts": [
+        {
+          "name": "data",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "minter",
           "isMut": false,
           "isSigner": false
         }
@@ -66,10 +123,14 @@ export const WHITELIST_IDL =
   ],
   "accounts": [
     {
-      "name": "WhitelistState",
+      "name": "Data",
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "periodStatus",
+            "type": "u8"
+          },
           {
             "name": "counter",
             "type": "u64"
@@ -90,6 +151,25 @@ export const WHITELIST_IDL =
                 3000
               ]
             }
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "PeriodStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "PendingSale"
+          },
+          {
+            "name": "PreSale"
+          },
+          {
+            "name": "PostSale"
           }
         ]
       }

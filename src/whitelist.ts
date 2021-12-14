@@ -12,13 +12,13 @@ program.version('0.0.1');
 
 log.setLevel(log.levels.INFO);
 
-const PROGRAM_ID = new PublicKey('AtJzU1u3dWVYQefiGxJocjRBcdArbKNrrDRzeDk1wEFr');
+const PROGRAM_ID = new PublicKey('9pkYv3SvYfd51mh1v3vn1aX2WHepx7wZxsfxpmsNdFT7');
 const WHITELIST_STATE = new PublicKey('2LtzaPN7S87FfWTUKxXk4KjTcYp4Pkb3vTEnq2TZSoTg');
 const WHITELIST_DATA = new PublicKey('2LtzaPN7S87FfWTUKxXk4KjTcYp4Pkb3vTEnq2TZSoTg');
 
-async function loadAnchorProgram(walletKeyPair: Keypair, env: string) {
+async function loadAnchorProgram(walletKeyPair: Keypair) {
   // @ts-ignore
-  const solConnection = new anchor.web3.Connection("https://cold-green-frost.solana-devnet.quiknode.pro/8a1ca977a24ae481d6f739d894f8aa606a5b90d6/");
+  const solConnection = new anchor.web3.Connection("https://sparkling-dry-thunder.solana-devnet.quiknode.pro/08975c8cb3c5209785a819fc9a3b2b537d3ba604/");
   const walletWrapper = new anchor.Wallet(walletKeyPair);
   const provider = new anchor.Provider(solConnection, walletWrapper, {
     preflightCommitment: 'recent',
@@ -39,28 +39,23 @@ function loadWalletKey(keypair): Keypair {
 program.
   command('init_whitelist')
   .option(
-    '-e, --env <string>',
-    'Solana cluster env name',
-    'devnet', //mainnet-beta, testnet, devnet
-  )
-  .option(
     '-k, --keypair <path>',
     `Solana wallet location`,
     '--keypair not provided',
   )
   .action(async (directory, cmd) => {
-    const { keypair, env } = cmd.opts();
+    const { keypair } = cmd.opts();
 
     const walletKeyPair = loadWalletKey(keypair);
     const whitelistState = anchor.web3.Keypair.generate();
     const whitelistData = anchor.web3.Keypair.generate();
 
     const whitelistDataSize = 8 + 32 * WHITELIST_LEN;
-    const program = await loadAnchorProgram(walletKeyPair, env);
+    const program = await loadAnchorProgram(walletKeyPair);
 
-    let tx = await program.rpc.initialize({
+    let tx = await program.rpc.initializeContract({
         accounts: {
-            whitelistState: whitelistState.publicKey,
+            data: whitelistState.publicKey,
             whitelistData: whitelistData.publicKey,
             user: walletKeyPair.publicKey,
             systemProgram: SystemProgram.programId,
@@ -112,15 +107,17 @@ program.
 
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
-        list.push(new PublicKey(line));
+        if (line && line.length > 32) {
+          list.push(new PublicKey(line));
+        }
     }
 
     console.log('Wallet Count: ', list.length);
 
     const walletKeyPair = loadWalletKey(keypair);
-    const program = await loadAnchorProgram(walletKeyPair, env);
+    const program = await loadAnchorProgram(walletKeyPair);
 
-    let tx = await program.rpc.addWhitelistAddresses(list, {
+    let tx = await program.rpc.addWhitelists(list, {
         accounts: {
             WHITELIST_STATE,
             WHITELIST_DATA,
@@ -147,53 +144,9 @@ program.
     const { keypair, env } = cmd.opts();
 
     const walletKeyPair = loadWalletKey(keypair);
-    const program = await loadAnchorProgram(walletKeyPair, env);
+    const program = await loadAnchorProgram(walletKeyPair);
 
-    let tx = await program.rpc.resetWhitelistCounter({
-        accounts: {
-            whitelist: WHITELIST_STATE,
-            authority: walletKeyPair.publicKey,
-        },
-        signers: [walletKeyPair],
-    });
-    console.log(tx);
-});
-
-program.
-  command('update_whitelist')
-  .option(
-    '-e, --env <string>',
-    'Solana cluster env name',
-    'devnet', //mainnet-beta, testnet, devnet
-  )
-  .option(
-    '-k, --keypair <path>',
-    `Solana wallet location`,
-    '--keypair not provided',
-  )
-  .option(
-    '-a, --addresses <path>',
-    `Wallet addresses to be added on whitelist`,
-    '--addresses not provided',
-  )
-  .action(async (directory, cmd) => {
-    const { keypair, env, addresses } = cmd.opts();
-
-    const fileContent = fs.readFileSync(keypair).toString();
-    let lines = fileContent.split('\n');
-    let list = [];
-
-    for (let i = 0; i < lines.length; i++) {
-        let line = lines[i];
-        list.push(new PublicKey(line));
-    }
-
-    console.log('Wallet Count: ', list.length);
-
-    const walletKeyPair = loadWalletKey(keypair);
-    const program = await loadAnchorProgram(walletKeyPair, env);
-
-    let tx = await program.rpc.updateWhitelist(list, {
+    let tx = await program.rpc.clearWhitelist({
         accounts: {
             whitelist: WHITELIST_STATE,
             authority: walletKeyPair.publicKey,
@@ -219,7 +172,7 @@ program.
     const { keypair, env } = cmd.opts();
 
     const walletKeyPair = loadWalletKey(keypair);
-    const program = await loadAnchorProgram(walletKeyPair, env);
+    const program = await loadAnchorProgram(walletKeyPair);
 
     let offset = 8;
     let info = await program.provider.connection.getAccountInfo(WHITELIST_DATA);
